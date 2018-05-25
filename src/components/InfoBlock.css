@@ -1,0 +1,8 @@
+.block{
+    border: 5px solid  black;
+    border-radius: 5%;
+    margin: 5px;
+    padding: 5px;
+    background: limegreen;
+    
+}
