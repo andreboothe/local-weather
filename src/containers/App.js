@@ -3,6 +3,7 @@ import './App.css';
 import Temperature from '../components/Temperature';
 import InfoBlock from '../components/InfoBlock';
 import degToCard from '../components/degToCard'
+import {toCelcius, toFahrenheit} from '../components/tempConverter'
 
 class App extends Component {
 
@@ -19,13 +20,11 @@ class App extends Component {
       name: '',
       country: '',
       windDeg: 0,
-      bgUrl: '',
+      bgClass: '',
       isLoadingCoords: true,
       isLoadingWeather: true
     }
   }
-
-  
 
   getLocation = () => {
     if (navigator.geolocation) {
@@ -38,8 +37,8 @@ class App extends Component {
 
   setCoords = (position) => {
     const pos = [
-      position.coords.latitude.toFixed(2), 
-      position.coords.longitude.toFixed(2)
+      position.coords.latitude, 
+      position.coords.longitude
     ];
     this.setState({coords: pos, isLoadingCoords: false});
     
@@ -50,16 +49,16 @@ class App extends Component {
     let result = '';
     switch(condition){
       case "clouds":
-        result += '../images/cloud.jpg';
+        result += 'bg-clouds';
         break;
       case "sun":
-        result += '../images/sun.jpg';
+        result += 'bg-sun';
         break;
       case "snow":
-        result += '../images/winter.jpg';
+        result += 'bg-winter';
         break;
       case "rain":
-        result += '../images/rain.jpg';
+        result += 'bg-rain';
         break;
       default:
       console.log('default');
@@ -69,7 +68,6 @@ class App extends Component {
     }
     return result;
   }
-
 
   setLocalWeather = () => {
     if(!this.state.isLoadingCoords){
@@ -91,70 +89,64 @@ class App extends Component {
             country: weather.sys.country,
             name: weather.name,
             unit: 'Celcius',  
-            bgUrl: bg,                            
+            bgClass: bg,                            
             isLoadingWeather: false 
           }); 
         });
+      
     }
-  }
-
-  toFahrenheit = (c) => {
-    return c * (9/5) + 32;
-  }
-
-  toCelcius = (f) => {
-    return (f - 32) * (5/9);
+    else{
+      setTimeout(() => this.setLocalWeather(),100);  
+    }
   }
 
   onClickConvert = () => {
     let tempChange = 0;
     
     if(this.state.unit === 'Celcius'){
-      tempChange = this.toFahrenheit(this.state.temp).toFixed();
+      tempChange = toFahrenheit(this.state.temp).toFixed();
       this.setState({temp: tempChange, unit: 'Fahrenheit'});
     }
     else{
-      tempChange = this.toCelcius(this.state.temp).toFixed();
+      tempChange = toCelcius(this.state.temp).toFixed();
       this.setState({temp: tempChange, unit: 'Celcius'});
     }
   }
  
   componentDidMount(){
     this.getLocation();
-    setTimeout(() => this.setLocalWeather(),1500);  
+    this.setLocalWeather();  
   }
 
   render() {
-    console.log(this.state.bgUrl);
-    return (this.state.isLoadingCoords)?
-    <h1>Loading Coords</h1>:
-    (this.state.isLoadingWeather)?
-      <h1>Loading Weather</h1>:
-    (
-      <div className="App center" 
-        style={{ 
-          background: `url('${this.state.bgUrl}')`,
-          backgroundSize: 'cover',
-        }}>
+    
+    const {temp, unit, isLoadingCoords, isLoadingWeather, 
+          bgClass, country, name, description, windDeg, windSpeed} = this.state;
 
-        <h1>Local Weather App</h1>
-        <div className="temp-section">
-          <Temperature 
-            unit={this.state.unit}
-            temp={this.state.temp}  
-            tempChange={this.onClickConvert}
-          />
-        </div>
-        
-        
+    return (isLoadingCoords)?
+      <h1 className="loading-title">Loading Coords</h1>:
+      (isLoadingWeather)?
+        <h1 className="loading-title">Loading Weather</h1>:
+      (
+        // (document.body.style.background = `url('${bgUrl}')`)
+        <div className={`App  center ${bgClass}`} >
 
-        <div className="info-section">
-          <InfoBlock data ={this.state.country +'\n' +this.state.name}/>
-          <InfoBlock data ={this.state.description}/>
-          <InfoBlock data ={degToCard(this.state.windDeg) +' ' +this.state.windSpeed +' knots'}/>
+          <h1 className="title">Local Weather App</h1>
+          <div className="temp-section">
+            <Temperature 
+              unit={unit}
+              temp={temp}  
+              tempChange={this.onClickConvert}
+            />
+          </div>
+          
+          <div className="info-section">
+            <InfoBlock data ={country +'\n' +name}/>
+            <InfoBlock data ={description}/>
+            <InfoBlock data ={degToCard(windDeg) +' ' +windSpeed +' knots'}/>
+          </div>
+          
         </div>
-        
-      </div>
     );
   }
 }

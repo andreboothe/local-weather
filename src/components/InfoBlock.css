@@ -1,8 +1,11 @@
 .block{
-    border: 5px solid  black;
+    border: 2px solid  black;
     border-radius: 5%;
     margin: 5px;
     padding: 5px;
-    background: limegreen;
-    
+    background: rgba(91,192,222,1);
+    word-wrap: break-word;
+    text-align: center;
+    height: 100px;
+    width: 200px;
 }
