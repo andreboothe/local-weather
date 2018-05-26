@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './App.css';
-import Temperature from '../components/Temperature';
 import InfoBlock from '../components/InfoBlock';
 import degToCard from '../components/degToCard'
 import {toCelcius, toFahrenheit} from '../components/tempConverter'
@@ -21,6 +20,9 @@ class App extends Component {
       country: '',
       windDeg: 0,
       bgClass: '',
+      bgSkyClass: '',
+      humidity:0,
+      iconUrl:'',
       isLoadingCoords: true,
       isLoadingWeather: true
     }
@@ -44,27 +46,40 @@ class App extends Component {
     
   }
 
-  getBgUrl = (condition) => {
-    condition = condition.toLowerCase();
-    let result = '';
-    switch(condition){
-      case "clouds":
-        result += 'bg-clouds';
+  getBgClass = (conditionCode) => {
+
+    return  (conditionCode >= 200 && conditionCode <= 232)?'bg-thunderstorm':
+              (conditionCode >= 500 && conditionCode <= 531)?'bg-rain':
+                (conditionCode >= 300 && conditionCode <= 321)?'bg-drizzle':
+                  (conditionCode >= 600 && conditionCode <= 622)?'bg-snow':
+                    (conditionCode === 800)?'bg-clear-sky':
+                      (conditionCode === 741)?'bg-fog':
+                        (conditionCode >= 801 && conditionCode <= 802)?'bg-partly-cloudy':
+                          (conditionCode >= 803 && conditionCode <= 804)?'bg-overcast': 'bg-nature';
+  }
+
+  setBgSky = (bgImage) => {
+    let result = ''
+    switch(bgImage){
+      case 'bg-thunderstorm':
+      case 'bg-snow':
+        result += 'bg-stormy-sky';
         break;
-      case "sun":
-        result += 'bg-sun';
+      case 'bg-rain':
+      case 'bg-drizzle':
+      case 'bg-fog':
+      case 'bg-overcast':
+        result += 'bg-overcast-sky';
         break;
-      case "snow":
-        result += 'bg-winter';
+      case 'bg-clear-sky':
+        result += 'bg-sunny-sky';
         break;
-      case "rain":
-        result += 'bg-rain';
+      case 'bg-partly-cloudy':
+        result += 'bg-cloud-sky';
         break;
       default:
-      console.log('default');
+        result += 'bg-sunny-sky';
         break;
-    
-  
     }
     return result;
   }
@@ -78,7 +93,8 @@ class App extends Component {
         .then(response => response.json())
         .then(weather => {
           
-          let bg = this.getBgUrl(weather.weather[0].main);
+          let bg = this.getBgClass(weather.weather[0].id);
+          let sky = this.setBgSky(bg);
           this.setState({
             main: weather.weather[0].main,
             temp: weather.main.temp,
@@ -89,7 +105,10 @@ class App extends Component {
             country: weather.sys.country,
             name: weather.name,
             unit: 'Celcius',  
-            bgClass: bg,                            
+            bgClass: bg,
+            humidity: weather.main.humidity,
+            bgSkyClass: sky,
+            iconUrl:weather.weather[0].icon,                           
             isLoadingWeather: false 
           }); 
         });
@@ -120,7 +139,8 @@ class App extends Component {
 
   render() {
     
-    const {temp, unit, isLoadingCoords, isLoadingWeather, 
+    const {temp, unit, isLoadingCoords, iconUrl, 
+          isLoadingWeather, bgSkyClass ,humidity,
           bgClass, country, name, description, windDeg, windSpeed} = this.state;
 
     return (isLoadingCoords)?
@@ -128,23 +148,38 @@ class App extends Component {
       (isLoadingWeather)?
         <h1 className="loading-title">Loading Weather</h1>:
       (
-        // (document.body.style.background = `url('${bgUrl}')`)
-        <div className={`App  center ${bgClass}`} >
+       
+        <div className="App" >
 
-          <h1 className="title">Local Weather App</h1>
-          <div className="temp-section">
-            <Temperature 
-              unit={unit}
-              temp={temp}  
-              tempChange={this.onClickConvert}
-            />
+          <div className="container">
+         
+            <section className= {`local-weather ${bgSkyClass}`}>
+              <h1 className="title">Local Weather App</h1>
+              <p className="message">Find out the temperature,<br/> weather conditions and more in your area...</p>
+             
+              <div className={`image   ${bgClass}`}>
+                
+              </div>
+            </section>
+
+            <section className="bg-dark">
+              <div className="info-section">
+                <InfoBlock 
+                  location = {country +'\n' +name}
+                  weatherCondition = {description}
+                  windData = {degToCard(windDeg) +' ' +windSpeed +' knots'}
+                  unit = {unit}
+                  temp = {temp}
+                  humidity = {humidity}
+                  tempChange = {this.onClickConvert}
+                  iconUrl ={iconUrl}
+                />
+              </div>
+            </section>
           </div>
           
-          <div className="info-section">
-            <InfoBlock data ={country +'\n' +name}/>
-            <InfoBlock data ={description}/>
-            <InfoBlock data ={degToCard(windDeg) +' ' +windSpeed +' knots'}/>
-          </div>
+          
+          
           
         </div>
     );

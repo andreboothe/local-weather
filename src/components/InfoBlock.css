@@ -1,11 +1,52 @@
-.block{
-    border: 2px solid  black;
-    border-radius: 5%;
-    margin: 5px;
-    padding: 5px;
-    background: rgba(91,192,222,1);
-    word-wrap: break-word;
+.info-block > div{
+    border-bottom: 1px solid rgba(192, 192, 192, .2);
+}
+
+.info-block{
+    margin-left: 20px;
+    margin-right: 100px;
+    margin-top: 100px;
+}
+
+.info-block>div> p{
+    color: rgba(240,240,240,1);
+    text-align: left;
+    vertical-align: middle;
+    font-size: 130%;
+    margin-left: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+span{
+    color:rgb(250, 0, 13);
+}
+
+.temp{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.condition{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    
+}
+
+button{
+    background: rgb(250, 0, 13);
+    color: rgba(240,240,240,1);
+    width: 130px;
     text-align: center;
-    height: 100px;
-    width: 200px;
+    border-radius: 20%;
+    font-size: 130%;
+    height: 100%;
+}
+
+
+button:focus{
+    outline: 0;
 }
