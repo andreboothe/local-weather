@@ -19,7 +19,7 @@
 }
 
 span{
-    color:rgb(250, 0, 13);
+    color:coral;
 }
 
 .temp{
@@ -49,4 +49,23 @@ button{
 
 button:focus{
     outline: 0;
+}
+
+
+@media(max-width: 900px){
+    
+    .info-block{
+        margin-top: 10px;
+    }
+    
+}
+
+@media(max-width: 500px){
+    
+    .info-block{
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+    
 }
