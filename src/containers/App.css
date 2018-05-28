@@ -1,10 +1,3 @@
-.loading-title{
-  visibility: visible;
-  opacity: 1;
-  transition: opacity 200ms linear;
-
-}
-
 .title{
   font-size: 300%;
   text-align: center;
@@ -20,6 +13,7 @@
 
 .App{
   height: 100vh;
+  width: 100%;
   display: flex;
   justify-content: center; 
   align-items: center;
@@ -28,32 +22,31 @@
 
 .local-weather{
   height:100%;
-  width: 450px;
+  max-width: 100%;
+  position: relative;
+  
 }
 
 .container{
   height:75%;
+  width: 900px;
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   text-align: center;
   box-shadow: 5px 5px 10px rgba(0,0,0, .5);
-}
-
-.temp-section{
-  display: flex;
-  flex-direction: row;
 }
 
 .info-section{
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 70vh;
+  width: 100%;
 }
 
 .image{
   height:55%;
+
 }
  /* Background images class */
 .bg-thunderstorm{
@@ -63,37 +56,37 @@
 
 .bg-rain{
   background: url('../images/rain-1265201_1280.png') no-repeat center center;
-  background-size: cover;
+  background-size: contain;
 }
 
 .bg-drizzle{
   background: url('../images/light-rain-1265212_1280.png') no-repeat center center;
-  background-size: cover;
+  background-size: contain;
 }
 
 .bg-snow{
   background: url('../images/snow-1265208_1280.png') no-repeat center center;
-  background-size: cover;
+  background-size: contain;
 }
 
 .bg-fog{
   background: url('../images/fog-1265203_1280.png') no-repeat center center;
-  background-size: cover;
+  background-size: contain;
 }
 
 .bg-clear-sky{
   background: url('../images/sun-1265199_1280.png') no-repeat center center;
-  background-size: cover;
+  background-size: contain;
 }
 
 .bg-partly-cloudy{
   background: url('../images/cloudiness-1265205_1280.png') no-repeat center center;
-  background-size: cover;
+  background-size: contain;
 }
 
 .bg-overcast{
   background: url('../images/starkbewolkt-1265202_1280.png') no-repeat center center;
-  background-size: cover;
+  background-size: contain;
 }
 
 /* Background gradient classes */
@@ -119,3 +112,67 @@
 
 
 
+.loading:before{
+  content: "";
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 60px;
+  width: 60px;
+  margin-top: -30px;
+  margin-left: -30px;
+  border-radius: 50%;
+  border: 5px solid transparent;
+  border-top-color: coral;
+  border-bottom-color: coral;
+  animation: spinner 0.7s ease infinite;
+}
+
+@keyframes spinner {
+  to{
+    transform: rotate(360deg);
+  }
+}
+
+@media(max-width: 900px){
+
+  .message{
+    display: none;
+  }
+  
+  .title{
+    margin: 0;
+  }
+
+  .image{
+    height: 200px;
+    margin: 0;
+  }
+  .container{
+    display: flex;
+    flex-direction: column;
+    margin: 20px
+  }
+}
+
+@media(max-width:500px){
+
+  .title{
+    margin: 0;
+    font-size: 200%;
+  }
+
+  .image{
+    height: 100px;
+    margin: 0;
+  }
+
+  .local-weather{
+    height: auto;
+  }
+
+  .container{
+    height: auto;
+  }
+}

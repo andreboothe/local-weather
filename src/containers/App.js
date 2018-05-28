@@ -29,21 +29,33 @@ class App extends Component {
   }
 
   getLocation = () => {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(this.setCoords);
-    } else {
-        prompt( "Geolocation is not supported by this browser.");
-    }
+
+    return new Promise( ( resolve, reject ) => {
+      navigator.geolocation.getCurrentPosition((position) => {
+        this.setCoords(position);
+        resolve('Coords Obtained.');
+      }, () => { reject( 'We could not get your location.' ); } );
+    });
+
+    
+    // if (navigator.geolocation) {
+
+      
+    //   navigator.geolocation.getCurrentPosition(this.setCoords);
+    // } else {
+    //     prompt( "Geolocation is not supported by this browser.");
+    // }
     
   }
 
   setCoords = (position) => {
+    
     const pos = [
       position.coords.latitude, 
       position.coords.longitude
     ];
+
     this.setState({coords: pos, isLoadingCoords: false});
-    
   }
 
   getBgClass = (conditionCode) => {
@@ -85,11 +97,12 @@ class App extends Component {
   }
 
   setLocalWeather = () => {
+    
     if(!this.state.isLoadingCoords){
       let lat = this.state.coords[0];
       let lon = this.state.coords[1];
-    
-      fetch(`https://fcc-weather-api.glitch.me/api/current?lat=${lat}&lon=${lon}`)
+  
+      return fetch(`https://fcc-weather-api.glitch.me/api/current?lat=${lat}&lon=${lon}`)
         .then(response => response.json())
         .then(weather => {
           
@@ -114,9 +127,7 @@ class App extends Component {
         });
       
     }
-    else{
-      setTimeout(() => this.setLocalWeather(),100);  
-    }
+    
   }
 
   onClickConvert = () => {
@@ -133,8 +144,9 @@ class App extends Component {
   }
  
   componentDidMount(){
-    this.getLocation();
-    this.setLocalWeather();  
+    this.getLocation()
+    .then(() => this.setLocalWeather());
+  
   }
 
   render() {
@@ -143,10 +155,9 @@ class App extends Component {
           isLoadingWeather, bgSkyClass ,humidity,
           bgClass, country, name, description, windDeg, windSpeed} = this.state;
 
-    return (isLoadingCoords)?
-      <h1 className="loading-title">Loading Coords</h1>:
-      (isLoadingWeather)?
-        <h1 className="loading-title">Loading Weather</h1>:
+    return (isLoadingCoords || isLoadingWeather)?
+      <div className="loading"></div>:
+      
       (
        
         <div className="App" >
